@@ -162,7 +162,9 @@
         .card-label {
             font-size: 14px;
             color: #7f8c8d;
-            margin-bottom: 8px;
+            /*margin-bottom: 8px;*/
+            margin-bottom: 0;
+            /* remove bottom margin since we are in a row */
             text-transform: uppercase;
             letter-spacing: 1px;
         }
@@ -182,6 +184,13 @@
 
         .card.balance .card-amount {
             color: #667eea;
+        }
+
+        .card-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            /* space between icon and text */
         }
 
         /* Sections */
@@ -471,7 +480,7 @@
 
         /* Grid Table */
         .grid-container {
-            max-height: 500px;
+            max-height: 400px;
             /* ya jitni height chahiye, example 500px */
             overflow-y: auto;
             /* vertical scroll agar content zyada ho */
@@ -482,20 +491,19 @@
         .grid-table {
             width: 100%;
             border-collapse: collapse;
+            table-layout: fixed;
+            /* Columns width fix */
+              background-color:rgb(229, 167, 245);
+           
+            /* Table background */
+            font-family: Arial, sans-serif;
+
         }
 
         .grid-table thead {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-        }
-
-        .grid-table th {
-            padding: 15px 12px;
-            text-align: left;
-            color: white;
+            
             font-weight: 600;
-            font-size: 13px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
+            /* background: linear-gradient(135deg, #667eea, #6fb3eb); */
         }
 
         .grid-table tbody tr {
@@ -504,53 +512,98 @@
         }
 
         .grid-table tbody tr:hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
-            transform: scale(1.005);
+            background-color: #e0f7fa;
         }
 
         .grid-table tbody tr:nth-child(even) {
-            background: #fafafa;
+            background: #f9f9f9;
         }
 
-        .grid-table tbody tr:nth-child(even):hover {
-            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+
+        .grid-table tbody tr:nth-child(odd) {
+            background: #ffffff;
         }
 
+        .grid-table th,
         .grid-table td {
+
             padding: 14px 12px;
             font-size: 13px;
             color: #2d3436;
+            text-align: left;
         }
 
-        .badge {
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            text-transform: uppercase;
+        /*Fixed header */
+
+        .grid-table thead th {
+            position: sticky;
+            top: 0;
+            background-color: #667eea, #764ba2;
+            z-index: 100;
+            /* So it stays above table rows */
         }
 
-        .badge.income {
+        /* Optional: scrollable tbody */
+
+        /* Income / Expense Badge in Table */
+        .badge-income {
             background: rgba(0, 184, 148, 0.15);
-            color: #00b894;
-        }
-
-        .badge.expense {
-            background: rgba(231, 76, 60, 0.15);
-            color: #e74c3c;
-        }
-
-        .amount-cell {
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
             font-weight: 600;
         }
 
-        .amount-cell.income {
-            color: #00b894;
+        .badge-expense {
+            background: rgba(231, 76, 60, 0.15);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-weight: 600;
         }
 
-        .amount-cell.expense {
-            color: #e74c3c;
+        .income-other,
+        .expense-type,
+        .remark {
+            max-width: 120px;
+            white-space: normal;
+            word-wrap: break-word;
         }
+
+        /* Amount colors */
+        .amount-income {
+            color: green !important;
+            font-weight: 600;
+        }
+
+        .amount-expense {
+            color: red !important;
+            font-weight: 600;
+        }
+
+        /* Balance colors for summary */
+        .balance-positive {
+            color: green;
+            font-weight: 600;
+        }
+
+        .balance-negative {
+            color: red;
+            font-weight: 600;
+        }
+
+        /* Income / Expense Badge in Table end */
+
+        /* Fix column width, allow text wrap */
+        .income-other,
+        .expense-type,
+        .remark {
+            max-width: 120px;
+            white-space: normal;
+            word-wrap: break-word;
+        }
+
+
 
         /* Footer */
         .footer {
@@ -711,7 +764,7 @@
         }
 
         .badge-income {
-            background: #2ecc71;
+            background: #5ab180;
         }
 
         .badge-expense {
@@ -726,6 +779,33 @@
         .amount-expense {
             color: #e74c3c;
             font-weight: 600;
+        }
+
+        /* remark and expense width fix */
+        table td {
+            white-space: normal !important;
+            word-wrap: break-word;
+            word-break: break-word;
+            max-width: 150px;
+            /* aap adjust kar sakte ho */
+        }
+
+        /* Only specific columns fix */
+        td.expense-type,
+        td.income-other,
+        td.remark {
+            max-width: 150px;
+            white-space: normal;
+            word-wrap: break-word;
+            word-break: break-word;
+        }
+
+        .card-period-label {
+            font-weight: bold;
+            font-size: 16px;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #333;
         }
     </style>
 
@@ -758,26 +838,57 @@
         <div class="container">
             <!-- Summary Cards -->
             <div class="summary-cards">
-                <div class="card income">
-                    <div class="card-icon">
-                        <i class="fas fa-arrow-down"></i>
-                    </div>
-                    <div class="card-label">Total Income</div>
-                    <div class="card-amount">₹ </div>
+
+                <!-- Today -->
+
+                <div class="card income today">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Total
+                            Income</span><span style="display: flex; justify-content: space-between;">Today</span></div>
+                    <div class="card-amount">₹ 0</div>
                 </div>
-                <div class="card expense">
-                    <div class="card-icon">
-                        <i class="fas fa-arrow-up"></i>
+                <div class="card expense today">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Total
+                            Expense</span><span style="display: flex; justify-content: space-between;">Today</span>
                     </div>
-                    <div class="card-label">Total Expense</div>
-                    <div class="card-amount">₹ </div>
+                    <div class="card-amount">₹ 0</div>
                 </div>
-                <div class="card balance">
-                    <div class="card-icon">
-                        <i class="fas fa-balance-scale"></i>
-                    </div>
-                    <div class="card-label">Net Balance</div>
-                    <div class="card-amount">₹ </div>
+                <div class="card balance today">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Net Balance
+                        </span><span style="display: flex; justify-content: space-between;">Today</span></div>
+                    <div class="card-amount">₹ 0</div>
+                </div>
+
+                <!-- Last 7 Days -->
+                <div class="card income last7">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Total Income
+                        </span><span style="display: flex; justify-content: space-between;">Last 7 Days</span></div>
+                    <div class="card-amount">₹ 0</div>
+                </div>
+                <div class="card expense last7">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Total Expense
+                        </span><span style="display: flex; justify-content: space-between;">Last 7 Days</span></div>
+                    <div class="card-amount">₹ 0</div>
+                </div>
+                <div class="card balance last7">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Net Balance
+                        </span><span style="display: flex; justify-content: space-between;">Last 7 Days</span></div>
+                    <div class="card-amount">₹ 0</div>
+                </div>
+                <!-- This Month -->
+                <div class="card income month">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Total Income
+                        </span><span style="display: flex; justify-content: space-between;">This Month</span></div>
+                    <div class="card-amount">₹ 0</div>
+                </div>
+                <div class="card expense month">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Total Expense
+                        </span><span style="display: flex; justify-content: space-between;">This Month</span></div>
+                    <div class="card-amount">₹ 0</div>
+                </div>
+                <div class="card balance month">
+                    <div class="card-label" style="display: flex; justify-content: space-between;"> <span>Net Balance
+                        </span><span sstyle="display: flex; justify-content: space-between;">This Month</span></div>
+                    <div class="card-amount">₹ 0</div>
                 </div>
             </div>
 
@@ -840,17 +951,17 @@
                     </div>
                     <div class="form-group">
                         <label>Payment Mode</label>
-                        <select id="paymentMode" onchange="toggleCheckNo()">
+                        <select id="paymentMod" name="paymentMode" onchange="toggleCheckNo()" required>
                             <option value="">Select Payment Mode</option>
                             <option value="upi">UPI</option>
                             <option value="cash">Cash</option>
                             <option value="netbanking">Netbanking</option>
-                            <option value="check">Check</option>
+                            <option value="check">Check-No</option>
                         </select>
                     </div>
                     <div class="form-group" id="checkNoGroup" style="display: none;">
                         <label>Check No.</label>
-                        <input type="text" placeholder="Enter Check Number">
+                        <input type="text" id="checkno" name="checkno" placeholder="Enter Check Number">
                     </div>
                     <div class="form-group">
                         <label>Remark</label>
@@ -867,79 +978,30 @@
                 <!-- changes done  -->
             </div>
     </form>
-    <!-- Transactions Report Section -->
-    <!-- <div class="section">
-        <h2 class="section-title">
-            <i class="fas fa-filter"></i> Transactions Report
-        </h2>
-        <div class="filter-row">
-            <button class="filter-btn today active">
-                <i class="fas fa-calendar-day"></i> Today
-            </button>
-            <button class="filter-btn yesterday">
-                <i class="fas fa-calendar-minus"></i> Yesterday
-            </button>
-            <button class="filter-btn week">
-                <i class="fas fa-calendar-week"></i> Last 7 Days
-            </button>
-            <button class="filter-btn month">
-                <i class="fas fa-calendar-alt"></i> Last 30 Days
-            </button>
-            <div class="custom-date">
-                <i class="fas fa-calendar-range" style="color: #667eea;"></i>
-                <input type="date" placeholder="Start Date">
-                <span>to</span>
-                <input type="date" placeholder="End Date">
-                <button class="btn-ok">
-                    <i class="fas fa-check"></i> OK
-                </button>
-            </div>
-            <div class="divider"></div>
-            <button class="btn-backup pdf">
-                <i class="fas fa-file-pdf"></i> Backup PDF
-            </button>
-            <button class="btn-backup excel">
-                <i class="fas fa-file-excel"></i> Backup Excel
-            </button>
-        </div>
-    </div> -->
-
     <!-- Transactions List Section -->
     <div class="section">
         <h2 class="section-title">
             <i class="fas fa-list-alt"></i> Transactions List
         </h2>
         <div class="grid-container">
-                    <table class="grid-table">
-                        <thead>
-                            <tr>
-                                <th>ID</th>
-                                <th>Date</th>
-                                <th>Transaction Type</th>
-                                <th>Income Type</th>
-                                <th>Income Other</th>
-                                <th>Expense Type</th>
-                                <th>Amount</th>
-                                <th>Remark</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody"> </tbody>
-                    </table>
-            <!-- <table class="grid-table" id="transactionsTable">
-                    <thead>
-                        <tr>
-                            <th><i class="fas fa-hashtag"></i> ID</th>
-                            <th><i class="fas fa-calendar"></i> Date</th>
-                            <th><i class="fas fa-exchange-alt"></i> Transaction Type</th>
-                            <th><i class="fas fa-tag"></i> Income Type</th>
-                            <th><i class="fas fa-info-circle"></i> Income Other</th>
-                            <th><i class="fas fa-receipt"></i> Expense Type</th>
-                            <th><i class="fas fa-rupee-sign"></i> Amount</th>
-                            <th><i class="fas fa-comment"></i> Remark</th>
-                        </tr>
-                    </thead>
-                    <tbody id="tableBody"> </tbody>
-            </table> -->
+            <table class="grid-table">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-calendar"></i> Date</th>
+                        <th> Transaction Type</th>
+                        <th><i class="fas fa-exchange-alt"></i> Income Type</th>
+                        <th><i class="fas fa-info-circle"></i> Income Other</th>
+                        <th><i class="fas fa-receipt"></i> Expense Type</th>
+                        <th><i class="fas fa-rupee-sign"></i> Amount</th>
+                        <th><i class="fas fa-comment"></i> Remark</th>
+                        <th> Payment_Mode</th>
+                        <th><i class="fas fa-info-circle"></i> Check_NO</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody"> </tbody>
+            </table>
+
         </div>
     </div>
     </div>
@@ -1021,8 +1083,6 @@
 
     <p id="response"></p>
 
-
-
     <!-- const scriptURL = "https://script.google.com/macros/s/AKfycbzMcCObFIjGYJgU6w6t2ieTLt4yvdLk4LmIUEiAgIUHtmOI678iCgEdxCERMOnerC9j/exec";  -- deply link  -->
     <script>
         const scriptURL = "https://script.google.com/macros/s/AKfycbzIBaeKH7g1IKFukV3BkuMsDkPNImlvbCuZm_-tHKkWPZcEP4uNXvs9sE2SU3ej8zOi/exec";
@@ -1060,9 +1120,6 @@
             document.getElementById("tid").value = tid; // set input value
             return tid;
         }
-
-
-
         /* ----------------------
            Set today's date
         -----------------------*/
@@ -1070,168 +1127,186 @@
             const today = new Date().toISOString().split("T")[0];
             document.getElementById("dateField").value = today;
         }
-
-        /* ----------------------
-       Highlight & focus helper
-    -----------------------*/
-        function highlightField(field) {
-            field.focus();
-            field.style.background = "#fff3b0"; // soft yellow for visibility
-            // reset other fields
-            const allFields = [document.getElementById("itd"), document.getElementById("expensetype"), document.getElementById("incomeother"), document.getElementById("amount")];
-            allFields.forEach(f => {
-                if (f !== field) f.style.background = f.disabled ? "#e8e8e8" : "#ffffff";
-            });
-        }
         /* ----------------------
        Transaction Logic
     -----------------------*/
+        function show(el) { el.style.display = "block"; }
+        function hide(el) { el.style.display = "none"; }
+        function enable(el) { el.disabled = false; }
+        function disable(el) { el.disabled = true; el.value = ""; }
+
         const tttype = document.getElementById("tttype");
         const itd = document.getElementById("itd");
-        const expensetype = document.getElementById("expensetype");
         const incomeother = document.getElementById("incomeother");
+        const expensetype = document.getElementById("expensetype");
         const amount = document.getElementById("amount");
+        const paymentMod = document.getElementById("paymentMod");
+        const remark = document.getElementById("remark");
+        const checkNoGroup = document.getElementById("checkNoGroup");
+        const checkno = document.getElementById("checkno");
 
-
+        /* -----------------------
+           MAIN TRANSACTION LOGIC
+        ------------------------*/
         tttype.addEventListener("change", function () {
+
+            hide(checkNoGroup);
+            checkno.value = "";
+
             if (this.value === "Income") {
-                itd.disabled = false;
-                expensetype.disabled = true;
-                expensetype.value = "";
-                incomeother.disabled = true;
-                incomeother.value = "";
-                amount.disabled = true;
-                amount.value = "";
-                highlightField(itd); // auto-focus Income Type
+                enable(itd);
+                disable(expensetype);
+
+                disable(incomeother);
+
+                enable(amount);
+                enable(remark);
+                enable(paymentMod);
+
             } else if (this.value === "Expense") {
-                itd.disabled = true;
-                itd.value = "";
-                incomeother.disabled = true;
-                incomeother.value = "";
-                expensetype.disabled = false;
-                amount.disabled = true;
-                amount.value = "";
-                highlightField(expensetype); // auto-focus Expense Type
+
+                disable(itd);
+                disable(incomeother);
+
+                enable(expensetype);
+                enable(amount);
+                enable(remark);
+                enable(paymentMod);
+
             } else {
-                itd.disabled = true;
-                expensetype.disabled = true;
-                incomeother.disabled = true;
-                amount.disabled = true;
+                disable(itd);
+                disable(expensetype);
+                disable(incomeother);
+                disable(amount);
+                disable(remark);
+                disable(paymentMod);
+                hide(checkNoGroup);
             }
         });
 
+        // income type changed
         itd.addEventListener("change", function () {
-            incomeother.disabled = this.value !== "other";
-            if (this.value !== "other") incomeother.value = "";
-            if (this.value !== "") {
-                amount.disabled = false;
-                highlightField(amount); // auto-focus Amount after selecting Income Type
+
+            if (this.value === "other") {
+                enable(incomeother);
             } else {
-                amount.disabled = true;
-                amount.value = "";
+                disable(incomeother);
             }
-            if (!incomeother.disabled) highlightField(incomeother); // if 'other', focus Income Other
+
+            if (this.value !== "") {
+                enable(amount);
+            }
         });
 
-        /* ----------------------
-    Smart Blink System
- -----------------------*/
-        let currentBlinkField = null;
-
-        // Function to start blinking on a field
-        function highlightField(field) {
-            stopBlink(); // Stop any existing blink
-            currentBlinkField = field;
-            field.classList.add("blink");
-            field.focus();
-
-            // Stop blinking as soon as user types/selects
-            const stopOnInput = () => {
-                field.classList.remove("blink");
-                field.removeEventListener("input", stopOnInput);
-                field.removeEventListener("change", stopOnInput);
-            };
-
-            field.addEventListener("input", stopOnInput);
-            field.addEventListener("change", stopOnInput);
-        }
-
-        // Stop current blink
-        function stopBlink() {
-            if (currentBlinkField) {
-                currentBlinkField.classList.remove("blink"); // remove blinking style
-                currentBlinkField = null; // reset pointer
+        // expense type changed
+        expensetype.addEventListener("input", function () {
+            if (this.value.trim() !== "") {
+                enable(amount);
+            } else {
+                disable(amount);
+            }
+        });
+        //checkno toggle 
+        function toggleCheckNo() {
+            if (paymentMod.value === "check") {
+                show(checkNoGroup);
+            } else {
+                hide(checkNoGroup);
+                checkno.value = "";
             }
         }
 
         /* ----------------------
-      Submit Form with Validation (Native Messages)
-   -----------------------*/
+   Submit Form with Validation
+-----------------------*/
         document.getElementById("myForm").addEventListener("submit", function (e) {
             e.preventDefault();
 
+            // helper to show native required UI
+            function req(field) {
+                // ensure element is focusable/visible for reportValidity to work nicely
+                try { field.focus({ preventScroll: true }); } catch (err) { }
+                return (field.reportValidity(), false);
+            }
+
+            // fetch form controls (always fresh references)
             const tttype = document.getElementById("tttype");
             const itd = document.getElementById("itd");
             const incomeother = document.getElementById("incomeother");
             const expensetype = document.getElementById("expensetype");
             const amount = document.getElementById("amount");
+            const paymentMod = document.getElementById("paymentMod");
+            const checkno = document.getElementById("checkno");
+            const checkNoGroup = document.getElementById("checkNoGroup");
 
-            // Function to trigger native required message
-            function validateField(field) {
-                highlightField(field); // blink
-                field.reportValidity(); // native browser message
-                return false;
+            // 1) Basic: Transaction type must be selected
+            if (!tttype.value) return req(tttype);
+
+            // 2) If Income side is active, Income Type required
+            if (!itd.disabled && !itd.value) return req(itd);
+
+            // 3) If Income Type === "other", Income Other is required
+            if (tttype.value === "Income" && itd.value === "other") {
+                if (!incomeother.value.trim()) return req(incomeother);
             }
 
-            // Validate visible/active fields
-            if (!tttype.value) return validateField(tttype);
-            if (!itd.disabled && !itd.value) return validateField(itd);
-            if (!incomeother.disabled && !incomeother.value.trim()) return validateField(incomeother);
-            if (!expensetype.disabled && !expensetype.value.trim()) return validateField(expensetype);
-            if (!amount.value || Number(amount.value) <= 0) return validateField(amount);
+            // 4) If Expense side active, Expense Type required
+            if (!expensetype.disabled && !expensetype.value.trim()) return req(expensetype);
 
+            // 5) Amount always required and > 0
+            if (!amount.value || Number(amount.value) <= 0) return req(amount);
+
+            // 6) Payment Mode required
+            if (!paymentMod.value) return req(paymentMod);
+
+            // 7) If payment = check and check box visible, Check-No required
+            if (paymentMod.value === "check" && checkNoGroup.style.display !== "none") {
+                if (!checkno.value.trim()) return req(checkno);
+            }
+
+            // passed validation -> prepare data & submit
             showLoader();
 
             const tidValue = generateTID();
-            const formData = new FormData(this);
-            const data = Object.fromEntries(formData);
+            const fd = new FormData(this);
+            let data = Object.fromEntries(fd);
             data.tid = tidValue;
 
-            // Format date
+            // replace strictly-empty values with hyphen '-'
+            Object.keys(data).forEach(k => {
+                if (data[k] === "" || data[k] === null || data[k] === undefined) data[k] = "-";
+            });
+
+            // format date as before
             const dateObj = new Date(data.date);
-            const options = { day: "2-digit", month: "short", year: "numeric" };
-            data.date = dateObj.toLocaleDateString("en-GB", options).replace(/ /g, "-");
+            const opt = { day: "2-digit", month: "short", year: "numeric" };
+            data.date = dateObj.toLocaleDateString("en-GB", opt).replace(/ /g, "-");
 
             fetch(scriptURL, {
                 method: "POST",
                 body: JSON.stringify(data)
             })
-                .then(response => response.json())
-
+                .then(res => res.json())
                 .then(result => {
-                    hideLoader(); // loader hide
+                    hideLoader();
                     if (result.status === "success") {
-                        stopBlink();
+                        showToast("✔ Successfully Saved!");
+                        // reset & reload as you had
                         document.getElementById("myForm").reset();
                         generateTID();
                         setTodayDate();
-                        showToast("✔ Successfully Saved!");
-
-                        // Ensure page reload after small delay
-                        setTimeout(function () {
-                            window.location.reload(true); // true forces reload from server
-                        }, 500); // 0.5s delay so toast is visible briefly
+                        setTimeout(() => window.location.reload(true), 500);
                     } else {
-                        alert("❌ Error: " + result.message);
+                        alert("❌ Error: " + (result.message || "Unknown"));
                     }
                 })
-                .catch(error => {
+                .catch(err => {
                     hideLoader();
-                    alert("⚠️ Network Error!");
+                    console.error(err);
+                    alert("⚠ Network Error!");
                 });
-
-
         });
+
 
         /* ----------------------
            Reset Button
@@ -1249,18 +1324,6 @@
         setTodayDate();
         //  blink update script 
 
-        function highlightField(field) {
-            field.focus();
-            // Remove blink class from all fields first
-            const allFields = [document.getElementById("itd"), document.getElementById("expensetype"), document.getElementById("incomeother"), document.getElementById("amount")];
-            allFields.forEach(f => {
-                f.classList.remove("blink");
-                f.style.background = f.disabled ? "#e8e8e8" : "#ffffff";
-            });
-
-            // Add blink to current field
-            field.classList.add("blink");
-        }
 
         tttype.addEventListener("change", function () {
             if (this.value === "Income") {
@@ -1271,7 +1334,7 @@
                 incomeother.value = "";
                 amount.disabled = true;
                 amount.value = "";
-                highlightField(itd);
+
             } else if (this.value === "Expense") {
                 itd.disabled = true;
                 itd.value = "";
@@ -1280,7 +1343,7 @@
                 expensetype.disabled = false;
                 amount.disabled = true;
                 amount.value = "";
-                highlightField(expensetype);
+
             } else {
                 itd.disabled = true;
                 expensetype.disabled = true;
@@ -1294,9 +1357,9 @@
             if (this.value !== "other") incomeother.value = "";
             if (this.value !== "") {
                 amount.disabled = false;
-                highlightField(amount);
+
             }
-            if (!incomeother.disabled) highlightField(incomeother);
+            if (!incomeother.disabled);
         });
 
         expensetype.addEventListener("input", function (e) {
@@ -1306,10 +1369,12 @@
         window.addEventListener('DOMContentLoaded', () => {
             fetch(scriptURL)
                 .then(res => res.json())
-                .then(data => displayData(data))
-                .catch(err => console.error("Error fetching data:", err));
+                .then(data => {
+                    console.log("RAW DATA FROM SHEET:", data);
+                    displayData(data);
+                })
+                .catch(err => console.error("Fetch Error:", err));
         });
-
 
         // date format dd-mmm-yyyy
         function formatDate(dateString) {
@@ -1322,79 +1387,102 @@
             const year = date.getFullYear();
             return `${day}-${month}-${year}`;
         }
-
+        // table may data sheet se fetch kerke lana
         function displayData(data) {
             const tbody = document.getElementById("tableBody");
             tbody.innerHTML = "";
 
-            let totalIncome = 0;
-            let totalExpense = 0;
-            const today = new Date();
+            let totalIncomeToday = 0, totalExpenseToday = 0;
+            let totalIncome7Days = 0, totalExpense7Days = 0;
+            let totalIncomeMonth = 0, totalExpenseMonth = 0;
 
-            // Sort data by date descending
-            data.sort((a, b) => new Date(b.Date || b.date) - new Date(a.Date || a.date));
+            const today = new Date(); today.setHours(0, 0, 0, 0);
+            const sevenDaysAgo = new Date(); sevenDaysAgo.setDate(today.getDate() - 6); sevenDaysAgo.setHours(0, 0, 0, 0);
+            const firstDayOfMonth = new Date(today.getFullYear(), today.getMonth(), 1);
+
+            // Sort by date descending
+            data.sort((a, b) => new Date(b.Date) - new Date(a.Date));
 
             data.forEach(row => {
-                const rowDate = new Date(row.Date || row.date || "");
-                const amount = parseFloat(row.Amount || row.amount || 0) || 0;
-                const type = (row.Transaction_Type || row.tttype || "").toLowerCase();
+                const rowDate = new Date(row.Date);
+                rowDate.setHours(0, 0, 0, 0);
 
-                // Check if row date is today
-                if (
-                    rowDate.getDate() === today.getDate() &&
-                    rowDate.getMonth() === today.getMonth() &&
-                    rowDate.getFullYear() === today.getFullYear()
-                ) {
-                    if (type === "income") totalIncome += amount;
-                    if (type === "expense") totalExpense += amount;
+                const amount = Number(row.Amount) || 0;
+                const type = (row.Transaction_Type || "").toLowerCase();
+
+                // --- Today / Last7 / Month totals ---
+                if (rowDate.getTime() === today.getTime()) {
+                    if (type === "income") totalIncomeToday += amount;
+                    if (type === "expense") totalExpenseToday += amount;
+                }
+                if (rowDate >= sevenDaysAgo && rowDate <= today) {
+                    if (type === "income") totalIncome7Days += amount;
+                    if (type === "expense") totalExpense7Days += amount;
+                }
+                if (rowDate >= firstDayOfMonth && rowDate <= today) {
+                    if (type === "income") totalIncomeMonth += amount;
+                    if (type === "expense") totalExpenseMonth += amount;
                 }
 
+                // Amount class for table
+                //const amountClass = type === "income" ? "amount-income" : "amount-expense";
+                const amountClass = type === "income" ? "amount-income" : type === "expense" ? "amount-expense" : "";
+                // Badge
+                const badge = type === "income" ?
+                    `<span class="badge-income">Income</span>` :
+                    type === "expense" ? `<span class="badge-expense">Expense</span>` : row.Transaction_Type;
+
+                // Append row
                 tbody.innerHTML += `
-        <tr>
-            <td>${row.ID || row.id || ""}</td>
-            <td>${formatDate(row.Date || row.date)}</td>
-            <td>${row.Transaction_Type || row.tttype || ""}</td>
-            <td>${row.Income_Type || row.itd || ""}</td>
-            <td>${row.Income_Other || row.io || ""}</td>
-            <td>${row.Expense_Type || row.etype || ""}</td>
-            <td>${row.Amount || row.amount || ""}</td>
-            <td>${row.Remark || row.remark || ""}</td>
-        </tr>`;
+            <tr>
+                <td>${row.id}</td>
+                <td>${formatDate(row.Date)}</td>
+                <td>${badge}</td>
+                <td>${row.Income_Type || ""}</td>
+                <td class="income-other">${row.Income_Other || "-"}</td>
+                <td class="expense-type">${row.Expense_Type || "-"}</td>
+                <td class="${amountClass}">${formatAmount(amount)}</td>
+                <td class="remark">${row.Remark || "-"}</td>
+                <td>${row.Payment_Mode || "-"}</td>
+                <td>${row.Check_NO || "-"}</td>
+            </tr>
+        `;
             });
 
-            colorIncomeRows();
+            // Update card function total income/expense , net balance
+            function updateCard(income, expense, prefix) {
+                const balance = income - expense;
+                const incomeElem = document.querySelector(`.card.income.${prefix} .card-amount`);
+                const expenseElem = document.querySelector(`.card.expense.${prefix} .card-amount`);
+                const balanceElem = document.querySelector(`.card.balance.${prefix} .card-amount`);
 
-            // Update summary cards
-            document.querySelector(".card.income .card-amount").textContent = `₹ ${totalIncome.toFixed(2)}`;
-            document.querySelector(".card.expense .card-amount").textContent = `₹ ${totalExpense.toFixed(2)}`;
-            document.querySelector(".card.balance .card-amount").textContent = `₹ ${(totalIncome - totalExpense).toFixed(2)}`;
-        }
-
-        
-                function colorIncomeRows() {
-                    const table = document.getElementById("tableBody");
-                    const rows = table.getElementsByTagName("tr");
-
-                    for (let row of rows) {
-                        const transactionTypeCell = row.cells[2]; // 3rd column = Transaction Type
-                        if (transactionTypeCell && transactionTypeCell.textContent.trim().toLowerCase() === "income") {
-                            row.classList.add("income-row"); // add class instead of inline style
-                        } else {
-                            row.classList.remove("income-row");
-                        }
-                    }
+                if (incomeElem) incomeElem.textContent = formatAmount(income);
+                if (expenseElem) expenseElem.textContent = formatAmount(expense);
+                if (balanceElem) {
+                    balanceElem.textContent = formatAmount(balance);
+                    balanceElem.className = `card-amount ${balance >= 0 ? 'balance-positive' : 'balance-negative'}`;
                 }
-        //checkno textbox 
-        function toggleCheckNo() {
-            const paymentMode = document.getElementById('paymentMode').value;
-            const checkNoGroup = document.getElementById('checkNoGroup');
-
-            if (paymentMode === 'check') {
-                checkNoGroup.style.display = 'flex';
-            } else {
-                checkNoGroup.style.display = 'none';
             }
+
+            // Example: update all three periods
+            updateCard(totalIncomeToday, totalExpenseToday, "today");
+            updateCard(totalIncome7Days, totalExpense7Days, "last7");
+            updateCard(totalIncomeMonth, totalExpenseMonth, "month");
         }
+
+
+
+        // jab koi table may value nhi ho tab "-"
+        function safeValue(v) {
+            return (v === undefined || v === null || v === "" || v == " ") ? "-" : v;
+        }
+        // rupee symbol in table 
+        function formatAmount(v) {
+            if (!v || isNaN(v)) return "-";
+            return `₹ ${Number(v).toLocaleString("en-IN")}`;
+        }
+
+
     </script>
 
 
