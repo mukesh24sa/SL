@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reports - Income Expense Management</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.0/chart.umd.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+            min-height: 100vh;
+        }
+
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+        }
+
+        .logo-icon {
+            width: 50px;
+            height: 50px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .logo h1 {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255,255,255,0.15);
+            border: none;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255,255,255,0.3);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+
+        .nav-btn.active {
+            background: white;
+            color: #667eea;
+        }
+
+        /* Main Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 25px;
+        }
+
+        /* Section */
+        .section {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 22px;
+        }
+
+        /* Filter Section */
+        .filter-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .filter-btn {
+            padding: 10px 18px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            transition: all 0.3s ease;
+            background: white;
+            color: #636e72;
+        }
+
+        .filter-btn:hover,
+        .filter-btn.active {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-color: #667eea;
+            color: white;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .custom-date {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            background: white;
+        }
+
+        .custom-date input {
+            border: none;
+            padding: 5px;
+            font-size: 13px;
+            width: 130px;
+        }
+
+        .custom-date input:focus {
+            outline: none;
+        }
+
+        .btn-ok {
+            padding: 8px 15px;
+            background: linear-gradient(135deg, #00b894, #00cec9);
+            border: none;
+            border-radius: 6px;
+            color: white;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-ok:hover {
+            transform: scale(1.05);
+            box-shadow: 0 4px 12px rgba(0, 184, 148, 0.4);
+        }
+
+        .divider {
+            width: 2px;
+            height: 35px;
+            background: #e0e0e0;
+            margin: 0 10px;
+        }
+
+        .btn-backup {
+            padding: 10px 18px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            color: white;
+        }
+
+        .btn-backup.pdf {
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .btn-backup.excel {
+            background: linear-gradient(135deg, #27ae60, #2ecc71);
+        }
+
+        .btn-backup:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.25);
+        }
+
+        /* Charts Section */
+        .charts-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+            transition: all 0.3s ease;
+        }
+
+        .chart-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 30px rgba(0,0,0,0.12);
+        }
+
+        .chart-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #2d3436;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .chart-title i {
+            color: #667eea;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 320px;
+        }
+
+        .chart-container.bar {
+            height: 380px;
+        }
+
+        /* Grid Table */
+        .grid-container {
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .grid-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .grid-table thead {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .grid-table th {
+            padding: 15px 12px;
+            text-align: left;
+            color: white;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .grid-table tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .grid-table tbody tr:hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+            transform: scale(1.002);
+        }
+
+        .grid-table tbody tr:nth-child(even) {
+            background: #fafafa;
+        }
+
+        .grid-table tbody tr:nth-child(even):hover {
+            background: linear-gradient(135deg, rgba(102, 126, 234, 0.08), rgba(118, 75, 162, 0.08));
+        }
+
+        .grid-table td {
+            padding: 14px 12px;
+            font-size: 13px;
+            color: #2d3436;
+        }
+
+        .badge {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            display: inline-block;
+        }
+
+        .badge.income {
+            background: rgba(0, 184, 148, 0.15);
+            color: #00b894;
+        }
+
+        .badge.expense {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .amount-cell {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .amount-cell.income { color: #00b894; }
+        .amount-cell.expense { color: #e74c3c; }
+
+        /* Summary Stats */
+        .summary-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
+        }
+
+        .stat-icon {
+            width: 55px;
+            height: 55px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+        }
+
+        .stat-card.income .stat-icon {
+            background: rgba(0, 184, 148, 0.15);
+            color: #00b894;
+        }
+
+        .stat-card.expense .stat-icon {
+            background: rgba(231, 76, 60, 0.15);
+            color: #e74c3c;
+        }
+
+        .stat-card.balance .stat-icon {
+            background: rgba(102, 126, 234, 0.15);
+            color: #667eea;
+        }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #7f8c8d;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+        }
+
+        .stat-card.income .stat-value { color: #00b894; }
+        .stat-card.expense .stat-value { color: #e74c3c; }
+        .stat-card.balance .stat-value { color: #667eea; }
+
+        /* Footer */
+        .footer {
+            background: linear-gradient(135deg, #2d3436, #636e72);
+            padding: 20px;
+            text-align: center;
+            color: white;
+            margin-top: 20px;
+        }
+
+        .footer p:first-child {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .footer p:last-child {
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* Responsive */
+        @media (max-width: 1200px) {
+            .charts-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .summary-row {
+                grid-template-columns: 1fr;
+            }
+            .header {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .filter-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .divider {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header class="header">
+        <div class="logo">
+            <div class="logo-icon">
+                <i class="fas fa-wallet"></i>
+            </div>
+            <h1>Income Expense Management System</h1>
+        </div>
+        <nav class="nav-menu">
+            <button class="nav-btn" onclick="window.location.href='index.html'">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </button>
+            <button class="nav-btn active">
+                <a href="report.html" target="_blank" class="nav-btn">
+                <i class="fas fa-chart-bar"></i> Reports</a>
+            </button>
+            <button class="nav-btn">
+                <i class="fas fa-cog"></i> Settings
+            </button>
+        </nav>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Summary Stats -->
+        <div class="summary-row">
+            <div class="stat-card income">
+                <div class="stat-icon">
+                    <i class="fas fa-arrow-down"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">Total Income</div>
+                    <div class="stat-value">₹ 1,25,000</div>
+                </div>
+            </div>
+            <div class="stat-card expense">
+                <div class="stat-icon">
+                    <i class="fas fa-arrow-up"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">Total Expense</div>
+                    <div class="stat-value">₹ 45,000</div>
+                </div>
+            </div>
+            <div class="stat-card balance">
+                <div class="stat-icon">
+                    <i class="fas fa-balance-scale"></i>
+                </div>
+                <div class="stat-info">
+                    <div class="stat-label">Net Balance</div>
+                    <div class="stat-value">₹ 80,000</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Section -->
+        <div class="charts-grid">
+            <!-- Pie Chart -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-pie"></i>
+                    Income vs Expense Distribution
+                </div>
+                <div class="chart-container">
+                    <canvas id="pieChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Bar Chart -->
+            <div class="chart-card">
+                <div class="chart-title">
+                    <i class="fas fa-chart-bar"></i>
+                    Income Type Analysis
+                </div>
+                <div class="chart-container bar">
+                    <canvas id="barChart"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transactions Report Section -->
+        <div class="section">
+            <h2 class="section-title">
+                <i class="fas fa-file-invoice-dollar"></i> Transactions Report
+            </h2>
+            <div class="filter-row">
+                <button class="filter-btn active" onclick="filterTransactions(this, 'today')">
+                    <i class="fas fa-calendar-day"></i> Today
+                </button>
+                <button class="filter-btn" onclick="filterTransactions(this, 'yesterday')">
+                    <i class="fas fa-calendar-minus"></i> Yesterday
+                </button>
+                <button class="filter-btn" onclick="filterTransactions(this, 'week')">
+                    <i class="fas fa-calendar-week"></i> Last 7 Days
+                </button>
+                <button class="filter-btn" onclick="filterTransactions(this, 'month')">
+                    <i class="fas fa-calendar-alt"></i> Last 30 Days
+                </button>
+                <div class="custom-date">
+                    <i class="fas fa-calendar-range" style="color: #667eea;"></i>
+                    <input type="date" id="startDate" placeholder="Start Date">
+                    <span>to</span>
+                    <input type="date" id="endDate" placeholder="End Date">
+                    <button class="btn-ok" onclick="applyCustomDate()">
+                        <i class="fas fa-check"></i> OK
+                    </button>
+                </div>
+                <div class="divider"></div>
+                <button class="btn-backup pdf" onclick="downloadPDF()">
+                    <i class="fas fa-file-pdf"></i> Backup PDF
+                </button>
+                <button class="btn-backup excel" onclick="downloadExcel()">
+                    <i class="fas fa-file-excel"></i> Backup Excel
+                </button>
+            </div>
+
+            <!-- Transactions Table -->
+            <div class="grid-container">
+                <table class="grid-table" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th><i class="fas fa-hashtag"></i> ID</th>
+                            <th><i class="fas fa-calendar"></i> Date</th>
+                            <th><i class="fas fa-exchange-alt"></i> Type</th>
+                            <th><i class="fas fa-tag"></i> Income Type</th>
+                            <th><i class="fas fa-info-circle"></i> Income Other</th>
+                            <th><i class="fas fa-receipt"></i> Expense Type</th>
+                            <th><i class="fas fa-rupee-sign"></i> Amount</th>
+                            <th><i class="fas fa-comment"></i> Remark</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>TXN001</td>
+                            <td>23-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>OPD</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 15,000</td>
+                            <td>Patient consultation fees</td>
+                        </tr>
+                        <tr>
+                            <td>TXN002</td>
+                            <td>23-Nov-2025</td>
+                            <td><span class="badge expense">Expense</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>Medical Supplies</td>
+                            <td class="amount-cell expense">₹ 8,500</td>
+                            <td>Purchased surgical gloves</td>
+                        </tr>
+                        <tr>
+                            <td>TXN003</td>
+                            <td>22-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>Pharmacy</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 25,000</td>
+                            <td>Medicine sales</td>
+                        </tr>
+                        <tr>
+                            <td>TXN004</td>
+                            <td>22-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>Lab-Test</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 12,000</td>
+                            <td>Blood tests & diagnostics</td>
+                        </tr>
+                        <tr>
+                            <td>TXN005</td>
+                            <td>21-Nov-2025</td>
+                            <td><span class="badge expense">Expense</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>Electricity Bill</td>
+                            <td class="amount-cell expense">₹ 18,000</td>
+                            <td>Monthly electricity payment</td>
+                        </tr>
+                        <tr>
+                            <td>TXN006</td>
+                            <td>21-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>X-Ray</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 8,000</td>
+                            <td>X-Ray imaging services</td>
+                        </tr>
+                        <tr>
+                            <td>TXN007</td>
+                            <td>20-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>IPD</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 35,000</td>
+                            <td>Patient admission & treatment</td>
+                        </tr>
+                        <tr>
+                            <td>TXN008</td>
+                            <td>20-Nov-2025</td>
+                            <td><span class="badge expense">Expense</span></td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td>Staff Salary</td>
+                            <td class="amount-cell expense">₹ 35,000</td>
+                            <td>Nurse monthly salary</td>
+                        </tr>
+                        <tr>
+                            <td>TXN009</td>
+                            <td>19-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>Sonography</td>
+                            <td>-</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 6,000</td>
+                            <td>Ultrasound imaging</td>
+                        </tr>
+                        <tr>
+                            <td>TXN010</td>
+                            <td>19-Nov-2025</td>
+                            <td><span class="badge income">Income</span></td>
+                            <td>Other</td>
+                            <td>Ambulance Service</td>
+                            <td>-</td>
+                            <td class="amount-cell income">₹ 5,000</td>
+                            <td>Emergency transport</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>© 2025 Income Expense Manager</p>
+        <p>Manage your finances with confidence.</p>
+    </footer>
+
+    <script>
+        // Pie Chart - Income vs Expense
+        const pieCtx = document.getElementById('pieChart').getContext('2d');
+        const pieChart = new Chart(pieCtx, {
+            type: 'pie',
+            data: {
+                labels: ['Income', 'Expense'],
+                datasets: [{
+                    data: [125000, 45000],
+                    backgroundColor: [
+                        'rgba(0, 184, 148, 0.8)',
+                        'rgba(231, 76, 60, 0.8)'
+                    ],
+                    borderColor: [
+                        'rgba(0, 184, 148, 1)',
+                        'rgba(231, 76, 60, 1)'
+                    ],
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'bottom',
+                        labels: {
+                            padding: 20,
+                            font: {
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                let label = context.label || '';
+                                if (label) {
+                                    label += ': ₹ ' + context.parsed.toLocaleString('en-IN');
+                                }
+                                return label;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bar Chart - Income Type Analysis
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        const barChart = new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: ['OPD', 'IPD', 'Pharmacy', 'Lab-Test', 'X-Ray', 'Sonography', 'Other'],
+                datasets: [{
+                    label: 'Income Amount (₹)',
+                    data: [15000, 35000, 25000, 12000, 8000, 6000, 5000],
+                    backgroundColor: [
+                        'rgba(52, 152, 219, 0.7)',
+                        'rgba(155, 89, 182, 0.7)',
+                        'rgba(46, 204, 113, 0.7)',
+                        'rgba(241, 196, 15, 0.7)',
+                        'rgba(230, 126, 34, 0.7)',
+                        'rgba(231, 76, 60, 0.7)',
+                        'rgba(149, 165, 166, 0.7)'
+                    ],
+                    borderColor: [
+                        'rgba(52, 152, 219, 1)',
+                        'rgba(155, 89, 182, 1)',
+                        'rgba(46, 204, 113, 1)',
+                        'rgba(241, 196, 15, 1)',
+                        'rgba(230, 126, 34, 1)',
+                        'rgba(231, 76, 60, 1)',
+                        'rgba(149, 165, 166, 1)'
+                    ],
+                    borderWidth: 2,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        display: false
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'Amount: ₹ ' + context.parsed.y.toLocaleString('en-IN');
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            callback: function(value) {
+                                return '₹ ' + value.toLocaleString('en-IN');
+                            }
+                        },
+                        grid: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+
+        // Filter Transactions
+        function filterTransactions(btn, filter) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            console.log('Filtering by:', filter);
+            // Add your filtering logic here
+        }
+
+        // Apply Custom Date
+        function applyCustomDate() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            if (startDate && endDate) {
+                console.log('Custom date range:', startDate, 'to', endDate);
+                // Add your custom date filtering logic here
+            } else {
+                alert('Please select both start and end dates');
+            }
+        }
+
+        // Download PDF
+        function downloadPDF() {
+            alert('Generating PDF report...');
+            // Add your PDF generation logic here
+        }
+
+        // Download Excel
+        function downloadExcel() {
+            alert('Generating Excel report...');
+            // Add your Excel generation logic here
+        }
+    </script>
+</body>
+</html>
