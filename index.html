@@ -820,6 +820,8 @@
                             <option value="lab-test">Lab-Test</option>
                             <option value="x-ray">X-Ray</option>
                             <option value="sonography">Sonography</option>
+                            <option value="Daycollection">Day-Collection</option>
+                            <option value="Nightcollection">Night-Collection</option>
                             <option value="other">Other</option>
                         </select>
                     </div>
@@ -1384,11 +1386,7 @@
         // radio button script 
             let originalData = [];  // global store (Sheet se aaya data)
 
-            // Jab aap sheet se data fetch karo, ye add kar dena:
-            // function loadDataFromSheet(data) {
-            //     originalData = data;
-            //     displayData(originalData);
-            // }
+            
             loadDataFromSheet(fetchedData);
 
             // ⭐ Radio Filter
