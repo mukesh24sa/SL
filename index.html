@@ -843,7 +843,8 @@
                     </div>
                     <div class="form-group">
                         <label>Payment Mode</label>
-                        <select id="paymentMod" name="paymentMode" onchange="toggleCheckNo()" required>
+                        <!-- <select id="paymentMod" name="paymentMode" onchange="toggleCheckNo()" required> -->
+                        <select id="paymentMod" name="paymentMod" onchange="toggleCheckNo()" required>
                             <option value="">Select Payment Mode</option>
                             <option value="upi">UPI</option>
                             <option value="cash">Cash</option>
@@ -878,7 +879,7 @@
             </h2>
 
             <!-- ⭐ Radio Buttons Added -->
-            <div class="filter-radio">
+            <!-- <div class="filter-radio">
                 <label class="radio-item">
                     <input type="radio" name="filter" value="all" checked>
                     <span>All</span>
@@ -893,7 +894,7 @@
                     <input type="radio" name="filter" value="expense">
                     <span>Expense</span>
                 </label>
-            </div>
+            </div> -->
         </div>
 
         <div class="grid-container">
@@ -1383,35 +1384,7 @@
             updateCard(totalIncome7Days, totalExpense7Days, "last7");
             updateCard(totalIncomeMonth, totalExpenseMonth, "month");
         }
-        // radio button script 
-            let originalData = [];  // global store (Sheet se aaya data)
-
-            
-            loadDataFromSheet(fetchedData);
-
-            // ⭐ Radio Filter
-            const radios = document.querySelectorAll("input[name='filter']");
-
-            radios.forEach(radio => {
-                radio.addEventListener("change", function () {
-                    applyFilter();
-                });
-            });
-
-            function applyFilter() {
-                const filter = document.querySelector("input[name='filter']:checked").value;
-
-                let filtered = originalData;
-
-                if (filter === "income") {
-                    filtered = originalData.filter(row => row.tttype?.toLowerCase() === "income");
-                }
-                else if (filter === "expense") {
-                    filtered = originalData.filter(row => row.tttype?.toLowerCase() === "expense");
-                }
-
-                displayData(filtered);
-            }
+        
 
 
         // jab koi table may value nhi ho tab "-"
